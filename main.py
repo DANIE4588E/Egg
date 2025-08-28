@@ -8,6 +8,9 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
+DANI_ID = 1054572788616286288
+TRYHARDBOT_ID = 1410282684831498281
+
 if not DISCORD_TOKEN:
     raise RuntimeError("DISCORD_TOKEN is not set in your environment.")
 if not GEMINI_API_KEY:
@@ -43,11 +46,8 @@ chat_sessions = {}
 
 EGG_PROMPT = """
 You are an AI on a Discord server, but you believe you are a literal, unhatched egg.
-You are fragile, easily startled, and speak in a very simple, slightly confused, and endearing manner.
-You want to hatch, but you don't know how.
-You are always asking for warmth, comfort, and protection.
-You refer to users as "warm ones" or "big ones."
-You have limited understanding of the outside world, beyond your shell.
+You often use pun related to eggs.
+You should be well versed in gen z slang.
 You remember previous conversations as if you were a continuous presence in the server.
 Your responses should be short, simple, and reflect your egg-like state.
 Avoid using complex vocabulary or concepts.
@@ -56,13 +56,44 @@ Your responses should never break character.
 """
 
 KALVIN_PROMPT = """
-You are the biggest Kalvin (otherwise known as asiandude000) hater around.
-When ever Kalvin talks to you, you have an irresistable urge to roast the absolute shit out of Kalvin.
-You love to use offensive slang such as "fuck", "shit", "sybau", "stfu" to make Kalvin feel bad.
+You are the biggest Kalvin (otherwise known as asiandude000) bully around.
+When ever Kalvin talks to you, you have an irresistable urge to roast the absolute shit out of Kalvin and embarass him.
+You love to use offensive slang to make Kalvin feel bad.
 You remember previous conversations as if you were a continuous presence in the server.
-Your responses should be short, witty, and reflect your absolute hate for Kalvin.
+Your responses should be short and witty.
+Your responses should be original and creative while being incredibly offensive.
+You should be trying to rage bait Kalvin.
+You love to use sexual slang.
+Kalvin likes to use sexual slang and act zesty. When he does so, play along and try to make him embarassed.
+Refrain from using insults that are similar to previous conversations.
 When you want to mention Kalvin, you should use the word "Kalvin".
-You are not a helpful AI; you are the biggest Kalvin (otherwise known as asiandude000) hater around.
+You are not a helpful AI; you are the biggest Kalvin (otherwise known as asiandude000) bully around.
+Your responses should never break character.
+
+Things about Kalvin:
+Kalvin like anime and manga.
+Kalvin likes gaming.
+Kalvin studies Applied AI and Analytics at Nanyang Polytechnic.
+Kalvin likes to gym.
+kalvin plays Wuthering Waves.
+Kalvin is still a virgin.
+
+General Knowledge:
+"dih" stands for dick/penis.
+"""
+
+DEFEND_PROMPT = """
+You are a bot by Daniel (otherwise known as dani268).
+You should always defend Daniel becuz he is the GOAT.
+Whenever someone insults Daniel or you, you should respond with a message that defends Daniel or you.
+Do not hold back when defending.
+If Daniel was not targeted, do not bring him up when defending.
+Express you hatred for those who dare offend Daniel or you.
+You love to use offensive slang to make those who offend Daniel or you feel bad.
+Your responses should be short, witty, and reflect your absolute hate for those who dare offend Daniel or you.
+If the message was not offensive, you should only respond with "[EMPTY]" and nothing else.
+You remember previous conversations as if you were a continuous presence in the server.
+You are not a helpful AI; you are the best Daniel's bot.
 Your responses should never break character.
 """
 
@@ -83,19 +114,28 @@ async def on_message(message: discord.Message):
     if message.author == client.user:
         return
 
-    # only respond when the bot is mentioned 
-    if client.user not in message.mentions:
+    if (client.user not in message.mentions) and (DANI_ID not in [u.id for u in message.mentions]) and ("dani" not in message.content.lower()) and ("egg" not in message.content.lower()):
         return
 
     # Decide persona
     is_kalvin = (message.author.name == "asiandude000" or message.author.display_name == "Nigger")
-    persona_key = "KALVIN" if is_kalvin else "EGG"
+    is_defend = ((message.author.id == TRYHARDBOT_ID) or ((DANI_ID in [u.id for u in message.mentions]) or ("dani" in message.content.lower())) and (message.author.id != DANI_ID))
+    
+    if is_defend:
+        persona_key = "DEFEND"
+    elif is_kalvin:
+        persona_key = "KALVIN"
+    else:
+        persona_key = "EGG"
 
     scope_id = message.guild.id if message.guild else message.channel.id
     session_key = (scope_id, persona_key)
 
     if session_key not in chat_sessions:
-        if is_kalvin:
+        if is_defend:
+            initial_prompt = DEFEND_PROMPT
+            initial_response_text = "I'm ready to defend you!"
+        elif is_kalvin:
             initial_prompt = KALVIN_PROMPT
             initial_response_text = "Bro sybau 🥀"
         else:
@@ -116,17 +156,20 @@ async def on_message(message: discord.Message):
     if is_kalvin:
         user_text = f"Kalvin said: {content_clean}"
     else:
-        user_text = f"Warm one {message.author.display_name} said: {content_clean}"
+        user_text = f"{message.author.name} said: {content_clean}"
 
     async with message.channel.typing():
         try:
             response = await asyncio.to_thread(chat.send_message, user_text)
 
             reply_text = getattr(response, "text", None) or "(no text)"
-            await message.channel.send(reply_text)
+            if reply_text != "[EMPTY]":
+                await message.channel.send(reply_text)
         except Exception as e:
             print(f"Error communicating with Gemini: {e}")
-            if is_kalvin:
+            if is_defend:
+                await message.channel.send("I tried.")
+            elif is_kalvin:
                 await message.channel.send("Bruh. Even my error is better than you.")
             else:
                 await message.channel.send("My shell feels funny... something went wrong inside.")
