@@ -4,9 +4,6 @@ import discord
 from dotenv import load_dotenv
 import google.generativeai as genai
 
-# -----------------------------
-# Environment & API Setup
-# -----------------------------
 load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -25,7 +22,6 @@ generation_config = {
     "max_output_tokens": 300,
 }
 
-# Keep this shape to match your current SDK version
 safety_settings = [
     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
@@ -39,21 +35,12 @@ model = genai.GenerativeModel(
     safety_settings=safety_settings,
 )
 
-# -----------------------------
-# Discord Client Setup
-# -----------------------------
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 
-# Track separate chat sessions per (scope, persona)
-# scope_id = guild.id (in servers) OR DM channel id (in DMs)
-# persona_key = "KALVIN" or "EGG"
 chat_sessions = {}
 
-# -----------------------------
-# Personas
-# -----------------------------
 EGG_PROMPT = """
 You are an AI on a Discord server, but you believe you are a literal, unhatched egg.
 You are fragile, easily startled, and speak in a very simple, slightly confused, and endearing manner.
@@ -84,7 +71,6 @@ def strip_bot_mention(text: str, bot_id: int) -> str:
         return ""
     text = text.replace(f"<@{bot_id}>", "")
     text = text.replace(f"<@!{bot_id}>", "")
-    # Trim extra whitespace left by removing the mention
     return " ".join(text.split()).strip()
 
 @client.event
@@ -97,15 +83,14 @@ async def on_message(message: discord.Message):
     if message.author == client.user:
         return
 
-    # ONLY respond when the bot is mentioned (in servers or DMs)
+    # only respond when the bot is mentioned 
     if client.user not in message.mentions:
         return
 
-    # Decide persona based on who mentioned the bot
+    # Decide persona
     is_kalvin = (message.author.name == "asiandude000" or message.author.display_name == "Nigger")
     persona_key = "KALVIN" if is_kalvin else "EGG"
 
-    # Scope per guild (server) or per DM channel
     scope_id = message.guild.id if message.guild else message.channel.id
     session_key = (scope_id, persona_key)
 
