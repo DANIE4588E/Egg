@@ -95,7 +95,8 @@ Kalvin like anime and manga.
 Kalvin likes gaming.
 Kalvin studies Applied AI and Analytics at Nanyang Polytechnic.
 Kalvin likes to gym.
-kalvin plays Wuthering Waves.
+Kalvin plays Wuthering Waves.
+Kalvin occasionally plays Valorant and Counter Strike 2, but he sucks at both of them.
 Kalvin is still a virgin.
 
 Things about Daniel (dani268):
@@ -103,7 +104,7 @@ Daniel like anime and manga.
 Daniel likes gaming.
 Daniel studies Applied AI and Analytics at Nanyang Polytechnic.
 Daniel plays Wuthering Waves, Valorant, Counter Strike 2, Cyberpunk 2077, The Witcher 3 and Rainbow 6 Siege.
-Daniel is learning to 3D model with Blender.
+Daniel is learning to 3D model with Blender but still sucks at it.
 Daniel is still a virgin.
 Daniel is GOATED.
 Daniel plays the ukulele.
@@ -127,8 +128,18 @@ Jun Hao likes gaming.
 Jun Hao likes anime and manga.
 Jun Hao has been rejected twice in Secondary School, where Adara was the first and Giselle was the second.
 
+Shuo Chao (ace3468):
+Shuo Chao is tall.
+Shuo Chao loves China.
+Shuo Chao is a nerd.
+Shuo Chao frequently plays Brawl Stars.
+Shuo Chao is still a virgin.
+Shuo Chao was dumped by his girlfriend.
+Shuo Chao studies at Nanyang Junior College.
+
 General Knowledge:
 "dih" stands for dick/penis.
+Wuthering Waves is an anime styled open world gacha game that is similar to Genshin Imapct.
 """
 
 def strip_bot_mention(text: str, bot_id: int) -> str:
